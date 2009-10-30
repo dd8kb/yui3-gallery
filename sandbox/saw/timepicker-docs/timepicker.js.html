@@ -1,0 +1,518 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: Timepicker   timepicker.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css?stamp=1256861618.44" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css?stamp=1256861618.44" />
+
+    <script type="text/javascript" src="assets/api-js?stamp=1256861618.44"></script>
+    <script type="text/javascript" src="assets/ac-js?stamp=1256861618.44"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com" title="YUI Doc Demo">YUI Doc Demo</a></h1>
+        <h3>Timepicker&nbsp; <span class="subtitle">0.0.1</span></h3>
+        <a href="./index.html" title="YUI Doc Demo">YUI Doc Demo</a> 
+            &gt; <a href="./module_timepicker.html" title="Timepicker">Timepicker</a>
+                
+                 &gt; timepicker.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+<div class="highlight"><pre><span class="c">/*</span>
+<span class="c">Copyright (c) 2009, Stephen Woods</span>
+<span class="c">All rights reserved.</span>
+
+<span class="c">Redistribution and use in source and binary forms, with or without</span>
+<span class="c">modification, are permitted provided that the following conditions are met:</span>
+<span class="c">    * Redistributions of source code must retain the above copyright</span>
+<span class="c">      notice, this list of conditions and the following disclaimer.</span>
+<span class="c">    * Redistributions in binary form must reproduce the above copyright</span>
+<span class="c">      notice, this list of conditions and the following disclaimer in the</span>
+<span class="c">      documentation and/or other materials provided with the distribution.</span>
+<span class="c">    * Neither the name of the Stephen Woods nor the</span>
+<span class="c">      names of its contributors may be used to endorse or promote products</span>
+<span class="c">      derived from this software without specific prior written permission.</span>
+
+<span class="c">THIS SOFTWARE IS PROVIDED BY STEPHEN WOODS &#39;&#39;AS IS&#39;&#39; AND ANY</span>
+<span class="c">EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c">WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c">DISCLAIMED. IN NO EVENT SHALL STEPHEN WOODS BE LIABLE FOR ANY</span>
+<span class="c">DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES</span>
+<span class="c">(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</span>
+<span class="c">LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND</span>
+<span class="c">ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT</span>
+<span class="c">(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS</span>
+<span class="c">SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="c">Inspired by: http://haineault.com/media/jquery/ui-timepickr/page/</span>
+<span class="c">This software is based on a concept by Maxime Haineault in code licensed under</span>
+<span class="c">an MIT license. However, none of his code or implementation details will reviewed</span>
+<span class="c">or used for this project.</span>
+<span class="c">*/</span>
+
+
+<span class="c">/**</span>
+<span class="c"> * A yui 3 timepicker</span>
+<span class="c"> * </span>
+<span class="c"> * @module Timepicker</span>
+<span class="c"> * @requires oop, event-custom, attribute, base, dom, classnamemanager, widget, event</span>
+<span class="c"> */</span>
+ 
+ 
+ <span class="c">/**</span>
+<span class="c">  * a YUI 3 implementation of the classic jQuery</span>
+<span class="c">  * timepicker widget</span>
+<span class="c">  * @class Timepicker</span>
+<span class="c">  * @namespace Y.Saw</span>
+<span class="c">  * @extends Widget</span>
+<span class="c">  */</span>
+
+    
+
+    <span class="kd">var</span> <span class="nx">array</span>       <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="o">,</span>
+    <span class="nx">getClassName</span><span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="o">,</span>
+    
+    <span class="c">//repeated and/or magic strings</span>
+    <span class="nx">NAMESPACE</span>   <span class="o">=</span> <span class="s1">&#39;Saw&#39;</span><span class="o">,</span>
+    <span class="nx">CONSTRUCTOR</span> <span class="o">=</span> <span class="s1">&#39;Timepicker&#39;</span><span class="o">,</span>
+    
+    <span class="nx">CELL_CLASS</span>  <span class="o">=</span> <span class="s1">&#39;cell&#39;</span><span class="o">,</span>
+    <span class="nx">HOUR_CLASS</span>  <span class="o">=</span> <span class="s1">&#39;hour&#39;</span><span class="o">,</span>
+    <span class="nx">MINUTE_CLASS</span><span class="o">=</span> <span class="s1">&#39;minute&#39;</span><span class="o">,</span>
+    <span class="nx">AMPM_CLASS</span>  <span class="o">=</span> <span class="s1">&#39;ampm&#39;</span><span class="o">,</span>
+    <span class="nx">ACTIVE_CLASS</span><span class="o">=</span> <span class="s1">&#39;active&#39;</span><span class="o">,</span>
+    
+    <span class="nx">NAME</span>        <span class="o">=</span> <span class="s1">&#39;NAME&#39;</span><span class="o">,</span>
+    <span class="nx">ROW</span>         <span class="o">=</span> <span class="s1">&#39;row&#39;</span><span class="o">,</span>
+    <span class="nx">AMSTR_KEY</span>   <span class="o">=</span> <span class="s1">&#39;strings.am&#39;</span><span class="o">,</span>
+    <span class="nx">PMSTR_KEY</span>   <span class="o">=</span> <span class="s1">&#39;strings.pm&#39;</span><span class="o">,</span>
+    
+    <span class="nx">DELAY_KEY</span>   <span class="o">=</span> <span class="s1">&#39;delay&#39;</span><span class="o">,</span>
+    
+    
+    
+    <span class="c">//constants for AM &amp; PM</span>
+    <span class="nx">AM</span>          <span class="o">=</span> <span class="mi">0</span><span class="o">,</span>
+    <span class="nx">PM</span>          <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+
+    
+    <span class="c">/* utils */</span>
+    
+    <span class="c">/**</span>
+<span class="c">     * Pad numbers to two digits</span>
+<span class="c">     * @protected</span>
+<span class="c">     * @method pad</span>
+<span class="c">     * @param {Number} num the number to bad</span>
+<span class="c">     * @returns {String} padded number as string</span>
+<span class="c">     * @type String|Object|Array|Boolean|Number</span>
+<span class="c">     */</span>
+    <span class="kd">function</span> <span class="nx">pad</span><span class="p">(</span><span class="nx">num</span><span class="p">){</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">num</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;0&#39;</span> <span class="o">+</span> <span class="nx">num</span> <span class="o">:</span> <span class="nx">num</span><span class="o">;</span>
+    <span class="p">}</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Creates a cell based on the little template defined in &quot;str&quot; </span>
+<span class="c">     * @protected</span>
+<span class="c">     * @method makeCell</span>
+<span class="c">     * @param {String} str The contents of the cell</span>
+<span class="c">     * @param {String} rowId the unique classname for the row to identify it later</span>
+<span class="c">     *</span>
+<span class="c">     * @returns {String} returns the assembled html string</span>
+<span class="c">     */</span>
+    
+    <span class="kd">function</span> <span class="nx">makeCell</span><span class="p">(</span><span class="nx">str</span><span class="o">,</span> <span class="nx">rowId</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">thisClass</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">NAME</span><span class="p">]</span><span class="o">,</span> <span class="nx">Timepicker</span><span class="p">[</span><span class="nx">str</span><span class="p">])</span><span class="o">,</span>
+            <span class="nx">myStr</span> <span class="o">=</span> <span class="s1">&#39;&lt;li class=&quot;&#39;</span><span class="o">+</span><span class="nx">thisClass</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">CELL_CLASS</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">rowId</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;&quot;&gt;&#39;</span><span class="o">+</span><span class="nx">str</span><span class="o">+</span><span class="s1">&#39;&lt;/li&gt;&#39;</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">myStr</span><span class="o">;</span>
+    <span class="p">}</span>
+
+    
+    <span class="c">//create the constructor, chain the parent</span>
+    <span class="kd">function</span> <span class="nx">Timepicker</span><span class="p">(</span><span class="nx">config</span><span class="p">){</span>
+         <span class="nx">Timepicker</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="p">);</span> 
+    <span class="p">}</span>        
+    
+    <span class="nx">Timepicker</span><span class="p">[</span><span class="nx">NAME</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;timepicker&#39;</span><span class="o">;</span>
+    
+    <span class="nx">Timepicker</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
+        
+        <span class="nx">time</span><span class="o">:</span><span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span><span class="p">{</span>
+                <span class="nx">hour</span><span class="o">:</span><span class="mi">0</span><span class="o">,</span>
+                <span class="nx">minute</span><span class="o">:</span><span class="mi">0</span><span class="o">,</span>
+                <span class="nx">ampm</span><span class="o">:</span><span class="nx">AM</span>
+            <span class="p">}</span>
+        <span class="p">}</span><span class="o">,</span>
+        
+        <span class="nx">delay</span><span class="o">:</span><span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span><span class="mi">15</span>
+        <span class="p">}</span><span class="o">,</span>
+    
+        <span class="nx">strings</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">am</span> <span class="o">:</span> <span class="s2">&quot;AM&quot;</span><span class="o">,</span>
+                <span class="nx">pm</span> <span class="o">:</span> <span class="s2">&quot;PM&quot;</span><span class="o">,</span>
+                <span class="nx">seperator</span> <span class="o">:</span> <span class="s1">&#39;:&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+    
+    
+    <span class="c">//build class names</span>
+    <span class="nx">Timepicker</span><span class="p">[</span><span class="nx">HOUR_CLASS</span><span class="p">]</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">NAME</span><span class="p">]</span><span class="o">,</span> <span class="nx">HOUR_CLASS</span><span class="p">);</span>
+    <span class="nx">Timepicker</span><span class="p">[</span><span class="nx">MINUTE_CLASS</span><span class="p">]</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">NAME</span><span class="p">]</span><span class="o">,</span> <span class="nx">MINUTE_CLASS</span><span class="p">);</span>
+    <span class="nx">Timepicker</span><span class="p">[</span><span class="nx">AMPM_CLASS</span><span class="p">]</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">NAME</span><span class="p">]</span><span class="o">,</span> <span class="nx">AMPM_CLASS</span><span class="p">);</span>
+    <span class="nx">Timepicker</span><span class="p">[</span><span class="nx">HOUR_CLASS</span><span class="p">]</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">NAME</span><span class="p">]</span><span class="o">,</span> <span class="nx">HOUR_CLASS</span><span class="o">,</span> <span class="nx">ROW</span><span class="p">);</span>
+    <span class="nx">Timepicker</span><span class="p">[</span><span class="nx">MINUTE_CLASS</span><span class="p">]</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">NAME</span><span class="p">]</span><span class="o">,</span> <span class="nx">MINUTE_CLASS</span><span class="o">,</span> <span class="nx">ROW</span><span class="p">);</span>
+    <span class="nx">Timepicker</span><span class="p">[</span><span class="nx">CELL_CLASS</span><span class="p">]</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">NAME</span><span class="p">]</span><span class="o">,</span> <span class="nx">CELL_CLASS</span><span class="p">);</span>
+    <span class="nx">Timepicker</span><span class="p">[</span><span class="nx">ACTIVE_CLASS</span><span class="p">]</span> <span class="o">=</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">NAME</span><span class="p">]</span><span class="o">,</span> <span class="nx">ACTIVE_CLASS</span><span class="p">);</span>
+    
+
+    
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Timepicker</span><span class="o">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="o">,</span> <span class="p">{</span>
+        
+        
+              <span class="c">/* static vars */</span>
+              
+              <span class="nx">AM</span><span class="o">:</span><span class="nx">AM</span><span class="o">,</span>
+              
+              <span class="nx">PM</span><span class="o">:</span><span class="nx">PM</span><span class="o">,</span>
+        
+              <span class="c">/* the &quot;model&quot;, actually a cache of dom refrences to find </span>
+<span class="c">                 elements quickly later */</span>
+              <span class="nx">_model</span> <span class="o">:</span> <span class="p">{</span><span class="nx">ampm</span><span class="o">:</span><span class="p">{}</span><span class="o">,</span><span class="nx">hour</span><span class="o">:</span><span class="p">{}</span><span class="o">,</span><span class="nx">minute</span><span class="o">:</span><span class="p">{}}</span><span class="o">,</span>
+              
+              <span class="c">/* allow a short delay before highlight */</span>
+              <span class="nx">_timer</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+              
+        
+            
+              <span class="nx">initializer</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+                  <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;time.ampm&#39;</span><span class="o">,</span> <span class="nx">AM</span><span class="p">);</span>
+                  <span class="kd">var</span> <span class="nx">hour</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;time.hour&#39;</span><span class="p">);</span>
+                  <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;time.hour&#39;</span><span class="o">,</span> <span class="p">((</span><span class="nx">hour</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="mi">12</span> <span class="o">:</span> <span class="nx">hour</span><span class="p">));</span>
+
+              <span class="p">}</span><span class="o">,</span>
+              
+              <span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+                  <span class="c">// nuke the model, which is storing references to dom objects</span>
+                  
+                  <span class="nx">delete</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_model</span><span class="p">.</span><span class="nx">ampm</span><span class="p">);</span>
+                  <span class="nx">delete</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_model</span><span class="p">.</span><span class="nx">hour</span><span class="p">);</span>
+                  <span class="nx">delete</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_model</span><span class="p">.</span><span class="nx">minute</span><span class="p">);</span>
+                  
+              <span class="p">}</span><span class="o">,</span>
+              
+              <span class="c">/**</span>
+<span class="c">               * This method syncs the value of time object,</span>
+<span class="c">               * including building the strings for 12hr and 24hr</span>
+<span class="c">               * also fires a &#39;timeset&#39; event</span>
+<span class="c">               * @method _syncTime</span>
+<span class="c">               * @protected</span>
+<span class="c">               *</span>
+<span class="c">               */</span>
+              <span class="nx">_syncTime</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+
+                  <span class="c">/**</span>
+<span class="c">                   * Fires when a new time has been set (after the time strings)</span>
+<span class="c">                   * have been built. Use this event rather than timeChange.</span>
+<span class="c">                   * @event timeset</span>
+<span class="c">                   * @param {Object} the time attribute object with the following attributes</span>
+<span class="c">                   * &lt;dl&gt;</span>
+<span class="c">                   *   &lt;dt&gt;hour&lt;/dt&gt;</span>
+<span class="c">                   *   &lt;dd&gt;The 12 hour hour&lt;/dd&gt;</span>
+<span class="c">                   *   &lt;dt&gt;minute&lt;/dt&gt;</span>
+<span class="c">                   *   &lt;dd&gt;The minutes&lt;/dd&gt;</span>
+<span class="c">                   *   &lt;dt&gt;s12hour&lt;/dt&gt;</span>
+<span class="c">                   *   &lt;dd&gt;A string representing the 12 hour time, with a seperator and an am/pm indicator as defined in strings&lt;/dd&gt;</span>
+<span class="c">                   *   &lt;dt&gt;s24hour&lt;/dt&gt;</span>
+<span class="c">                   *   &lt;dd&gt;A string representing the 24 hour time, with the seperator defined in strings&lt;/dd&gt;</span>
+<span class="c">                   * &lt;/dl&gt;</span>
+<span class="c">                   */</span>
+
+
+                   <span class="c">/**</span>
+<span class="c">                    * Fires when a cell is clicked on</span>
+<span class="c">                    * @event cellclick</span>
+<span class="c">                    * @param event {Event.Facade} An Event Facade object</span>
+<span class="c">                    */</span>
+                  <span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">,</span>
+                  
+                  <span class="nx">ampm</span> <span class="o">=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">ampm</span><span class="o">,</span>
+                  <span class="nx">seperator</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;strings.seperator&#39;</span><span class="p">)</span><span class="o">,</span>
+                  <span class="nx">minute</span>    <span class="o">=</span> <span class="nx">pad</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">minute</span><span class="p">)</span><span class="o">,</span>
+                  
+                  <span class="c">//build the string for ampm based on the strings</span>
+                  <span class="nx">ampmString</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ampm</span> <span class="o">==</span> <span class="nx">AM</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">AMSTR_KEY</span><span class="p">)</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PMSTR_KEY</span><span class="p">);</span>
+                  
+                  <span class="c">//store the string representation of the 12 hour time</span>
+
+                  <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;time.s12hour&#39;</span><span class="o">,</span> 
+                          <span class="p">((</span><span class="nx">time</span><span class="p">.</span><span class="nx">hour</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="mi">12</span> <span class="o">:</span> <span class="nx">time</span><span class="p">.</span><span class="nx">hour</span><span class="p">)</span> <span class="o">+</span> 
+                          <span class="nx">seperator</span> <span class="o">+</span> <span class="nx">minute</span> <span class="o">+</span> <span class="nx">ampmString</span><span class="p">);</span>
+                  
+                  <span class="c">//convert 12 hour to 24</span>
+                  <span class="kd">var</span> <span class="nx">hour</span> <span class="o">=</span> <span class="p">(</span><span class="nx">ampm</span> <span class="o">==</span> <span class="nx">PM</span><span class="p">)</span> <span class="o">?</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">hour</span><span class="o">,</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="mi">12</span> <span class="o">:</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">hour</span><span class="o">,</span><span class="mi">10</span><span class="p">);</span>
+                  <span class="k">if</span><span class="p">(</span><span class="nx">hour</span> <span class="o">==</span> <span class="mi">24</span> <span class="o">||</span> <span class="nx">hour</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">)</span> <span class="p">{</span><span class="nx">hour</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">hour</span><span class="o">-</span><span class="mi">12</span><span class="p">);}</span>
+                  <span class="k">if</span><span class="p">(</span><span class="nx">hour</span> <span class="o">==</span> <span class="mi">12</span> <span class="o">&amp;&amp;</span> <span class="nx">ampm</span> <span class="o">==</span> <span class="nx">AM</span><span class="p">)</span> <span class="p">{</span><span class="nx">hour</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span><span class="p">}</span>
+
+                  <span class="c">//store the string for 24 hour time</span>
+                  <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;time.s24hour&#39;</span><span class="o">,</span> <span class="nx">hour</span> <span class="o">+</span> <span class="nx">seperator</span> <span class="o">+</span> <span class="nx">minute</span><span class="p">);</span>
+                  
+                  <span class="c">//fire time change event</span>
+                  <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;timeset&#39;</span><span class="o">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">));</span>
+              <span class="p">}</span><span class="o">,</span>
+              
+              <span class="nx">_handleClick</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+                  <span class="c">//dispatch &#39;cellclick&#39; event on any clicks</span>
+                  <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">CELL_CLASS</span><span class="p">])){</span>
+                      <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;cellclick&#39;</span><span class="o">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">));</span>
+                  <span class="p">}</span>
+              <span class="p">}</span><span class="o">,</span>
+              
+              <span class="nx">_handleOver</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+                  <span class="c">//this handles mouseover events, which it uses to change</span>
+                  <span class="c">//the store value of time as defined in the params</span>
+                  
+                  <span class="kd">var</span> <span class="nx">targ</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="o">,</span> <span class="nx">delay</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DELAY_KEY</span><span class="p">);</span>
+                  
+                  <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_timer</span><span class="p">){</span>
+                      <span class="k">this</span><span class="p">.</span><span class="nx">_timer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+                      <span class="k">this</span><span class="p">.</span><span class="nx">_timer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                  <span class="p">}</span>
+                  
+                  <span class="k">this</span><span class="p">.</span><span class="nx">_timer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="nx">delay</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_highlight</span><span class="o">,</span> <span class="nx">targ</span><span class="p">);</span>
+                  
+                  
+              <span class="p">}</span><span class="o">,</span>
+              
+              <span class="nx">_highlight</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">targ</span><span class="p">){</span>
+                  <span class="c">//make sure this is one of our cells</span>
+                    <span class="k">if</span><span class="p">(</span><span class="nx">targ</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">CELL_CLASS</span><span class="p">])){</span>
+
+                        <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">targ</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">);</span>
+
+                        <span class="c">//we are using classnames to figure out which row is which</span>
+                        <span class="k">if</span><span class="p">(</span><span class="nx">targ</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">HOUR_CLASS</span><span class="p">])){</span>
+                            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;time.hour&#39;</span><span class="o">,</span><span class="nx">value</span><span class="p">);</span>
+                        <span class="p">}</span><span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">targ</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">AMPM_CLASS</span><span class="p">])){</span>
+
+                            <span class="c">//ugly, but otherwise we would need to embed metadata</span>
+                            <span class="c">//somewhere else, this seemed easy enough</span>
+                            <span class="kd">var</span> <span class="nx">amString</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">AMSTR_KEY</span><span class="p">);</span>
+
+                            <span class="k">if</span><span class="p">(</span><span class="nx">value</span> <span class="o">==</span> <span class="nx">amString</span><span class="p">){</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;time.ampm&#39;</span><span class="o">,</span> <span class="nx">AM</span><span class="p">);</span>
+                            <span class="p">}</span> <span class="k">else</span><span class="p">{</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;time.ampm&#39;</span><span class="o">,</span> <span class="nx">PM</span><span class="p">);</span>
+                            <span class="p">}</span>
+
+                        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+                            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;time.minute&#39;</span><span class="o">,</span> <span class="nx">value</span><span class="p">);</span>
+                        <span class="p">}</span>
+
+                    <span class="p">}</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_syncTime</span><span class="p">();</span>
+
+                    <span class="k">this</span><span class="p">.</span><span class="nx">syncUI</span><span class="p">();</span>
+              <span class="p">}</span><span class="o">,</span>
+              
+              <span class="nx">_handleOut</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+                  <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_timer</span><span class="p">){</span>
+                      <span class="k">this</span><span class="p">.</span><span class="nx">_timer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+                      <span class="k">this</span><span class="p">.</span><span class="nx">_timer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                  <span class="p">}</span>  
+              <span class="p">}</span><span class="o">,</span>
+              
+              <span class="nx">renderUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+                  <span class="c">//FIXME: This could be more efficient!</span>
+                  
+                  <span class="c">/*</span>
+<span class="c">                  current implementation builds three ordered lists, one for </span>
+<span class="c">                  each row. Then we use the makeCell private method tp create a cell</span>
+<span class="c">                  with the given class, based on string constants defined up top</span>
+<span class="c">                  */</span>
+                  <span class="kd">var</span> <span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">)</span><span class="o">,</span>
+                       <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_model</span><span class="o">;</span>
+                       
+                  <span class="c">//create row function is very simple...</span>
+                  <span class="kd">function</span> <span class="nx">createRow</span><span class="p">(){</span> <span class="k">return</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;ol&gt;&#39;</span><span class="p">);}</span>
+                  
+                  <span class="kd">var</span> <span class="nx">row</span> <span class="o">=</span> <span class="p">[];</span>
+                  <span class="c">//only need three rows</span>
+                  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="o">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                      <span class="nx">row</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">createRow</span><span class="p">();</span>
+                  <span class="p">}</span>
+                  
+                  <span class="c">//wrap make cell in node create</span>
+                  <span class="kd">function</span> <span class="nx">mc</span> <span class="p">(</span><span class="nx">str</span><span class="o">,</span> <span class="nx">c</span><span class="p">){</span>
+                      <span class="k">return</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">makeCell</span><span class="p">(</span><span class="nx">str</span><span class="o">,</span> <span class="nx">c</span><span class="p">));</span>
+                  <span class="p">}</span>
+                  
+
+                  <span class="nx">m</span><span class="p">[</span><span class="nx">AMPM_CLASS</span><span class="p">].</span><span class="nx">AM</span> <span class="o">=</span> <span class="nx">mc</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">AMSTR_KEY</span><span class="p">)</span><span class="o">,</span><span class="nx">AMPM_CLASS</span><span class="p">);</span>
+                  <span class="nx">m</span><span class="p">[</span><span class="nx">AMPM_CLASS</span><span class="p">].</span><span class="nx">PM</span> <span class="o">=</span> <span class="nx">mc</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PMSTR_KEY</span><span class="p">)</span><span class="o">,</span><span class="nx">AMPM_CLASS</span><span class="p">);</span>
+                  <span class="nx">row</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="nx">AMPM_CLASS</span><span class="p">].</span><span class="nx">AM</span><span class="p">);</span>
+                  <span class="nx">row</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="nx">AMPM_CLASS</span><span class="p">].</span><span class="nx">PM</span><span class="p">);</span>
+                  
+                  <span class="c">//build rows, creating a function to use only twice, but</span>
+                  <span class="c">//still remove duplicates</span>
+                  <span class="kd">function</span> <span class="nx">assembleRow</span><span class="p">(</span><span class="nx">start</span><span class="o">,</span> <span class="nx">row</span><span class="o">,</span> <span class="nx">max</span><span class="o">,</span> <span class="nx">step</span><span class="o">,</span> <span class="nx">c</span><span class="p">){</span>
+                      <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">start</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;=</span><span class="nx">max</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="nx">step</span><span class="p">){</span>
+                          <span class="kd">var</span> <span class="nx">cell</span> <span class="o">=</span> <span class="nx">mc</span><span class="p">(</span><span class="nx">i</span><span class="o">,</span> <span class="nx">c</span><span class="p">);</span>
+                          <span class="nx">m</span><span class="p">[</span><span class="nx">c</span><span class="p">][</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">cell</span><span class="o">;</span>
+                          <span class="nx">row</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">cell</span><span class="p">);</span>
+                      <span class="p">}</span> 
+                  <span class="p">}</span>
+                     
+                  <span class="nx">assembleRow</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="nx">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">,</span> <span class="mi">12</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="nx">HOUR_CLASS</span><span class="p">);</span>
+
+                  <span class="nx">assembleRow</span><span class="p">(</span><span class="mi">0</span><span class="o">,</span> <span class="nx">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">,</span> <span class="mi">45</span><span class="o">,</span> <span class="mi">15</span><span class="o">,</span> <span class="nx">MINUTE_CLASS</span><span class="p">);</span>
+                  
+                  <span class="k">this</span><span class="p">.</span><span class="nx">_model</span><span class="p">[</span><span class="nx">AMPM_CLASS</span><span class="p">].</span><span class="nx">row</span> <span class="o">=</span> <span class="nx">row</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                  <span class="k">this</span><span class="p">.</span><span class="nx">_model</span><span class="p">[</span><span class="nx">HOUR_CLASS</span><span class="p">].</span><span class="nx">row</span> <span class="o">=</span> <span class="nx">row</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+                  <span class="k">this</span><span class="p">.</span><span class="nx">_model</span><span class="p">[</span><span class="nx">MINUTE_CLASS</span><span class="p">].</span><span class="nx">row</span> <span class="o">=</span> <span class="nx">row</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+                  
+                  <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;&lt;div&gt;&#39;</span><span class="p">);</span>
+                  
+                  
+                  <span class="nx">array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">row</span><span class="o">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span>
+                      <span class="nx">parent</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+                  <span class="p">});</span>
+
+                  <span class="nx">cb</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">parent</span><span class="p">);</span>
+            
+                  <span class="c">//store for later</span>
+                  <span class="k">this</span><span class="p">.</span><span class="nx">allCells</span> <span class="o">=</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">queryAll</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">);</span>
+             
+              <span class="p">}</span><span class="o">,</span>
+              
+              <span class="c">/**</span>
+<span class="c">               * Show/hide the widget</span>
+<span class="c">               * @method toggle</span>
+<span class="c">               */</span>              
+              <span class="nx">toggle</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+                  <span class="k">this</span><span class="p">[(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;visible&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;hide&#39;</span> <span class="o">:</span> <span class="s1">&#39;show&#39;</span><span class="p">)]();</span>
+                  <span class="k">this</span><span class="p">.</span><span class="nx">syncUI</span><span class="p">();</span> <span class="c">//IE 6 has an issue without this</span>
+              <span class="p">}</span><span class="o">,</span>
+              
+              <span class="nx">bindUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+                  
+                  <span class="kd">var</span> <span class="nx">cb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">);</span>
+                  <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="o">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_handleClick</span><span class="o">,</span> <span class="k">this</span><span class="p">);</span>
+                  <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mouseover&#39;</span><span class="o">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_handleOver</span><span class="o">,</span> <span class="k">this</span><span class="p">);</span>
+                  <span class="nx">cb</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mouseout&#39;</span><span class="o">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_handleOut</span><span class="o">,</span> <span class="k">this</span><span class="p">);</span>
+              <span class="p">}</span><span class="o">,</span>
+              
+              <span class="nx">syncUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+                  
+                  <span class="c">//get the current tine vlaue</span>
+                  <span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">);</span>
+                 
+                  <span class="c">//get all of the li elements to clear their active state</span>
+                  <span class="k">this</span><span class="p">.</span><span class="nx">allCells</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">ACTIVE_CLASS</span><span class="p">]);</span>
+                  
+                  <span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_model</span><span class="o">;</span>
+                  <span class="kd">var</span> <span class="nx">apos</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+                  
+                  <span class="c">//handle ampm row, because of l10n can&#39;t count on</span>
+                  <span class="c">//the value, so instead we use the &quot;constant&quot;</span>
+                  <span class="k">if</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">ampm</span> <span class="o">==</span> <span class="nx">AM</span><span class="p">){</span>
+                      <span class="nx">m</span><span class="p">.</span><span class="nx">ampm</span><span class="p">.</span><span class="nx">AM</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">ACTIVE_CLASS</span><span class="p">]);</span>
+                      <span class="nx">apos</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">ampm</span><span class="p">.</span><span class="nx">AM</span><span class="p">.</span><span class="nx">getX</span><span class="p">();</span>
+                  <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">ampm</span> <span class="o">==</span> <span class="nx">PM</span><span class="p">){</span>
+                      <span class="nx">m</span><span class="p">.</span><span class="nx">ampm</span><span class="p">.</span><span class="nx">PM</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">ACTIVE_CLASS</span><span class="p">]);</span>
+                      <span class="nx">apos</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">ampm</span><span class="p">.</span><span class="nx">PM</span><span class="p">.</span><span class="nx">getX</span><span class="p">();</span>
+                  <span class="p">}</span>
+                  
+                  <span class="c">//handle minute row</span>
+                  <span class="nx">m</span><span class="p">.</span><span class="nx">minute</span><span class="p">[</span><span class="nx">time</span><span class="p">.</span><span class="nx">minute</span><span class="p">].</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">ACTIVE_CLASS</span><span class="p">]);</span>
+                 
+                  
+                  <span class="c">//handle hour row</span>
+                  <span class="nx">m</span><span class="p">.</span><span class="nx">hour</span><span class="p">[</span><span class="nx">time</span><span class="p">.</span><span class="nx">hour</span><span class="p">].</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">[</span><span class="nx">ACTIVE_CLASS</span><span class="p">]);</span>
+                  
+                  <span class="nx">m</span><span class="p">.</span><span class="nx">hour</span><span class="p">.</span><span class="nx">row</span><span class="p">.</span><span class="nx">setX</span><span class="p">(</span><span class="nx">apos</span><span class="p">);</span>
+
+                  <span class="nx">m</span><span class="p">.</span><span class="nx">minute</span><span class="p">.</span><span class="nx">row</span><span class="p">.</span><span class="nx">setX</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">hour</span><span class="p">[</span><span class="nx">time</span><span class="p">.</span><span class="nx">hour</span><span class="p">].</span><span class="nx">getX</span><span class="p">());</span>
+     
+              <span class="p">}</span>
+          <span class="p">});</span>
+          
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">build</span><span class="p">(</span><span class="nx">Timepicker</span><span class="p">.</span><span class="nx">NAME</span><span class="o">,</span> <span class="nx">Timepicker</span><span class="o">,</span> <span class="p">{</span><span class="nx">dynamic</span><span class="o">:</span><span class="kc">false</span><span class="p">});</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="nx">NAMESPACE</span> <span class="o">+</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="nx">CONSTRUCTOR</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">[</span><span class="nx">NAMESPACE</span><span class="p">][</span><span class="nx">CONSTRUCTOR</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Timepicker</span><span class="o">;</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="module_Timepicker.html" title="Timepicker">Timepicker</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Y.Saw.Timepicker.html" title="Y.Saw.Timepicker">Y.Saw.Timepicker</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="timepicker.js.html" title="timepicker.js">timepicker.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+    ALL_YUI_PROPS = [{"url": "Y.Saw.Timepicker.html#event_cellclick", "access": "", "host": "Y.Saw.Timepicker", "type": "event", "name": "cellclick"}, {"url": "Y.Saw.Timepicker.html#method_makeCell", "access": "protected", "host": "Y.Saw.Timepicker", "type": "method", "name": "makeCell"}, {"url": "Y.Saw.Timepicker.html#method_pad", "access": "protected", "host": "Y.Saw.Timepicker", "type": "method", "name": "pad"}, {"url": "Y.Saw.Timepicker.html#method__syncTime", "access": "protected", "host": "Y.Saw.Timepicker", "type": "method", "name": "_syncTime"}, {"url": "Y.Saw.Timepicker.html#event_timeset", "access": "", "host": "Y.Saw.Timepicker", "type": "event", "name": "timeset"}, {"url": "Y.Saw.Timepicker.html#method_toggle", "access": "", "host": "Y.Saw.Timepicker", "type": "method", "name": "toggle"}];
+</script>
+</body>
+</html>
